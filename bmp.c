@@ -34,6 +34,7 @@ int main( void ) {
 
 	FILE *inputImageFile; // pointer to input image file
 	FILE *outputPixelDataFile; // pointer to output pixel data file
+	FILE *html;
 	BmpHeader header;     // variable of structure BmpHeader
 	BmpImageInfo info;    // variable of structure BmpImageInfo
 	Rgb pixelData;        // variable of structure Rgb
@@ -54,6 +55,8 @@ int main( void ) {
 
 	inputImageFile = fopen(fileName, "rb");
 	outputPixelDataFile = fopen("PixelDataFile.txt", "w");
+	html = fopen("TextImage.html", "w");
+	fprintf(html,"<!DOCTYPE.html><html><body bgcolor=\"black\">");
 
 	// Exception handling
 
@@ -95,8 +98,10 @@ int main( void ) {
 			}
 
 			read += sizeof(Rgb);
-			sprintf(pixelInfo, "Pixel %d: %3u %3u %3u\n", j+1, pixelData.red, pixelData.green, pixelData.blue);
-            fwrite(pixelInfo, 1, sizeof(pixelInfo), outputPixelDataFile);
+			fprintf(html,"<font color=\"%02x%02x%02x\">0</font>\n", pixelData.red, pixelData.green, pixelData.blue);
+			fprintf(outputPixelDataFile, "Pixel %d: %3u %3u %3u\n", j+1, pixelData.red, pixelData.green, pixelData.blue);
+
+
 
 			if(pixelData.red != 0) {
                 red++;
@@ -120,12 +125,17 @@ int main( void ) {
 			fread(&pixelData, read, 1, inputImageFile);
 		}
 
-	}
+		fprintf(html,"<br/>");
 
+	}
+    fprintf(html,"</body></html>");
 	printf( "Done.\n" );
 
 	fclose(inputImageFile);
 	fclose(outputPixelDataFile);
+    fclose(html);
+
+	printf("\nImage to text file created!!\nHTML file created!!!\n");
 
 	printf("\nBMP-Info:\n");
 	printf("Width x Height: %u x %u\n", info.width, info.height);
